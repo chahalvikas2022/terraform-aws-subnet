@@ -11,7 +11,6 @@ locals {
 ##-----------------------------------------------------------------------------
 module "private-labels" {
   source      = "git::https://github.com/chahalvikas2022/terraform-multicloud-labels.git"
-  version     = "1.0.0"
   name        = "payment-api"
   environment = "prod"
   repository  = "terraform-multicloud-labels"
@@ -26,7 +25,6 @@ module "private-labels" {
 
 module "public-labels" {
   source      = "git::https://github.com/chahalvikas2022/terraform-multicloud-labels.git"
-  version     = "1.0.0"
   name        = "payment-api"
   environment = "prod"
   repository  = "terraform-multicloud-labels"
