@@ -1,0 +1,152 @@
+# 🏗️ Terraform-AWS-Subnet
+
+metadata:
+  name: Terraform-AWS-Subnet
+  description: A production-grade, reusable AWS Subnet module by OpsStation.
+  badges:
+    - label: Made by OpsStation
+      url: "https://www.opsstation.com"
+      image: "https://img.shields.io/badge/Made%20by-OpsStation-blue?style=flat-square&logo=terraform"
+    - label: License
+      url: "LICENSE"
+      image: "https://img.shields.io/badge/License-MIT-blue.svg"
+    - label: Terraform
+      image: "https://img.shields.io/badge/Terraform-1.13%2B-purple.svg?logo=terraform"
+    - label: CI
+      url: "https://github.com/OpsStation/terraform-aws-subnet/actions/workflows/ci.yml"
+      image: "https://github.com/OpsStation/terraform-aws-subnet/actions/workflows/ci.yml/badge.svg"
+  organization: OpsStation
+  website: "https://www.opsstation.com"
+  contact: "hello@opsstation.com"
+  tagline: "Designed for reliability, performance, and security — following AWS networking best practices."
+
+about_opsstation:
+  description: >
+    OpsStation delivers Cloud & DevOps excellence for modern teams.
+  services:
+    - Infrastructure Automation with Terraform, Ansible & Kubernetes
+    - Cost Optimization via scaling & right-sizing
+    - Security & Compliance baked into CI/CD pipelines
+    - Fully Managed Operations across AWS, Azure, and GCP
+  contact:
+    website: "https://www.opsstation.com"
+    email: "hello@opsstation.com"
+
+features:
+  - Creates Public, Private, and Database subnets
+  - Supports multiple Availability Zones and custom CIDR blocks
+  - Automatic route table association for each subnet type
+  - Optional NAT Gateway support for private subnets
+  - Compatible with VPC Flow Logs for enhanced network visibility
+  - Tags and naming convention managed through the Labels module
+  - Seamless integration with other OpsStation Terraform modules
+
+usage_examples:
+  - name: private-subnet
+    description: Example usage for private subnet
+    code: |
+      module "private-subnets" {
+        source              = "git::https://github.com/opsstation/terraform-aws-subnet.git?ref=v1.0.0"
+        name                = "app"
+        environment         = "test"
+        nat_gateway_enabled = true
+        availability_zones  = ["eu-west-1a"]
+        vpc_id              = module.vpc.vpc_id
+        type                = "private"
+        cidr_block          = module.vpc.vpc_cidr_block
+        ipv6_cidr_block     = module.vpc.ipv6_cidr_block
+        ipv4_private_cidrs  = ["10.0.3.0/24"]
+        public_subnet_ids   = ["subnet-07962e9e61ad3bcd3"]
+      }
+
+  - name: public-private-subnet-single-nat-gateway
+    description: Example for single NAT Gateway with public-private subnets
+    code: |
+      module "subnets" {
+        source              = "./../../"
+        nat_gateway_enabled = true
+        single_nat_gateway  = true
+        name                = "app"
+        environment         = "test"
+        availability_zones  = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
+        vpc_id              = module.vpc.vpc_id
+        type                = "public-private"
+        igw_id              = module.vpc.igw_id
+        cidr_block          = module.vpc.vpc_cidr_block
+        ipv6_cidr_block     = module.vpc.ipv6_cidr_block
+        enable_ipv6         = false
+      }
+
+  - name: public-private
+    description: Example for public and private subnet with IPv6 support
+    code: |
+      module "subnets" {
+        source                                         = "./../../"
+        name                                           = "app"
+        environment                                    = "test"
+        nat_gateway_enabled                            = true
+        availability_zones                             = ["eu-west-1a", "eu-west-1b"]
+        vpc_id                                         = module.vpc.vpc_id
+        type                                           = "public-private"
+        igw_id                                         = module.vpc.igw_id
+        cidr_block                                     = module.vpc.vpc_cidr_block
+        ipv6_cidr_block                                = module.vpc.ipv6_cidr_block
+        public_subnet_assign_ipv6_address_on_creation  = true
+        enable_ipv6                                    = true
+        private_subnet_assign_ipv6_address_on_creation = true
+      }
+
+  - name: public-subnet
+    description: Example usage for public subnet
+    code: |
+      module "subnet" {
+        source             = "./../.."
+        name               = "app"
+        environment        = "test"
+        availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
+        vpc_id             = module.vpc.vpc_id
+        type               = "public"
+        igw_id             = module.vpc.igw_id
+        ipv4_public_cidrs  = ["10.0.1.0/24", "10.0.13.0/24", "10.0.18.0/24"]
+        enable_ipv6        = false
+      }
+
+outputs:
+  description: AWS Subnet Module Outputs
+  list:
+    - name: public_subnet_ids
+      description: The IDs of the created Public Subnets.
+    - name: private_subnet_ids
+      description: The IDs of the created Private Subnets.
+    - name: database_subnet_ids
+      description: The IDs of the created Database Subnets.
+    - name: public_route_table_ids
+      description: The IDs of the Route Tables associated with Public Subnets.
+    - name: private_route_table_ids
+      description: The IDs of the Route Tables associated with Private Subnets.
+    - name: database_route_table_ids
+      description: The IDs of the Route Tables associated with Database Subnets.
+    - name: public_subnet_arns
+      description: The ARNs of the created Public Subnets.
+    - name: private_subnet_arns
+      description: The ARNs of the created Private Subnets.
+    - name: database_subnet_arns
+      description: The ARNs of the created Database Subnets.
+    - name: availability_zones
+      description: The list of Availability Zones used to create the subnets.
+    - name: tags
+      description: A mapping of tags assigned to the subnet resources.
+
+aws_tag_rules:
+  cloud: AWS
+  case: TitleCase
+  allowed_characters: Any
+  examples:
+    - Name
+    - Environment
+    - CostCenter
+
+maintained_by:
+  organization: OpsStation
+  website: "https://www.opsstation.com"
+  slogan: "Simplifying Cloud, Securing Scale."
